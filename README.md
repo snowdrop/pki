@@ -1,3 +1,18 @@
+Table of Contents
+=================
+
+* [Instructions](#instructions)
+    * [Requirements](#requirements)
+    * [Generate CA key &amp; certificate](#generate-ca-key--certificate)
+    * [TODO: To be reviewed](#todo-to-be-reviewed)
+        * [Populating a private key saved in a key store](#populating-a-private-key-saved-in-a-key-store)
+        * [To check the content of the store](#to-check-the-content-of-the-store)
+        * [To export the private key](#to-export-the-private-key)
+        * [To export the client and CA certificate](#to-export-the-client-and-ca-certificate)
+        * [To export the public key](#to-export-the-public-key)
+    * [Create now a pkcs12 using cert manager](#create-now-a-pkcs12-using-cert-manager)
+    * [Additional information](#additional-information)
+
 # Instructions
 
 - https://www.baeldung.com/spring-boot-https-self-signed-certificate
