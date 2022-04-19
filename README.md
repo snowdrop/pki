@@ -21,8 +21,8 @@ keytool -genkeypair \
   -keysize 2048 \
   -dname "CN=snowdrop.dev,OU=Middleware,O=Red Hat,L=Florennes,S=Namur,C=BE" \
   -storetype PKCS12 \
-  -keystore snowdrop.p12 \
-  -storepass ${KEYSTORE_PASSWORD} \
+  -keystore cert/snowdrop.p12 \
+  -storepass password \
   -validity 3650
 Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) with a validity of 3,650 days
         for: CN=snowdrop.dev, OU=Middleware, O=Red Hat, L=Florennes, ST=Namur, C=BE
@@ -30,25 +30,25 @@ Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) wi
 
 ## To check the content of the store
 ```bash
-keytool -list -storetype PKCS12 -keystore snowdrop.p12 -storepass ${KEYSTORE_PASSWORD} 
+keytool -list -storetype PKCS12 -keystore cert/snowdrop.p12 -storepass password 
 OR 
-openssl pkcs12 -info -in snowdrop.p12 -passin pass:password -passout pass:password
+openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password
 ```
 
 ## To output the private key
 ```bash
-openssl pkcs12 -info -in snowdrop.p12 -passin pass:password -passout pass:password -nodes -nocerts
+openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nodes -nocerts > cert/sowdrop.crt
 ```
 
 ## To output the certificates
 ```bash
-openssl pkcs12 -info -in snowdrop.p12 -passin pass:password -passout pass:password -nokeys 
+openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nokeys 
 ```
 ## To get the public key
 
 ```bash
-openssl pkcs12 -in snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys -out snowdrop.pem
-openssl x509 -pubkey -in snowdrop.pem -noout > snowdrop_pubkey.pem
+openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys -out cert/snowdrop.pem
+openssl x509 -pubkey -in cert/snowdrop.pem -noout > cert/snowdrop_pub.pem
 ```
 
 ## Create now a pkcs12 using cert manager
@@ -112,7 +112,7 @@ kubectl get secret/snowdrop-p12 -n cert-manager -o yaml
 ## Additional information
 
 For generating our keystore in a JKS format, we can use the following command:
-`keytool -genkeypair -alias snowdrop -keyalg RSA -keysize 2048 -keystore snowdrop.jks -storepass ${KEYSTORE_PASSWORD} -validity 3650`
+`keytool -genkeypair -alias snowdrop -keyalg RSA -keysize 2048 -keystore snowdrop.jks -storepass password -validity 3650`
 
 **Note**: We recommend using the PKCS12 format, which is an industry standard format !
 
