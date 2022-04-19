@@ -3,6 +3,7 @@
 https://www.baeldung.com/spring-boot-https-self-signed-certificate
 https://www.misterpki.com/pkcs12/
 https://stackoverflow.com/questions/9497719/extract-public-private-key-from-pkcs12-file-for-later-use-in-ssh-pk-authenticati
+https://gist.github.com/aneer-anwar/a92a9403e6ce5d0710b75e1f478a218b
 
 ## Requirements
 
@@ -10,9 +11,32 @@ https://stackoverflow.com/questions/9497719/extract-public-private-key-from-pkcs
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-## Commands
+## Generate CA key & certificate
 
-Generate a private key and selfsigned certificate
+```bash
+rm -rf {ca,cert} && mkdir -p {ca,cert}
+openssl genrsa -out ca/ca.key 2048
+openssl req -x509 -new -nodes -key ca/ca.key -sha256 -days 1024 -subj '/CN=CA Authory/O=Red Hat/L=Florennes/C=BE' -out ca/ca.pem
+
+openssl genrsa -out cert/tls.key 2048
+openssl req -new -key cert/tls.key -subj '/CN=www.snowdrop.dev/O=Red Hat/L=Florennes/C=BE' -out cert/tls.csr
+
+openssl x509 -req -in cert/tls.csr -CA ca/ca.pem -CAkey ca/ca.key -CAcreateserial -out cert/tls.pem -days 1024 -sha256
+
+openssl pkcs12 -inkey cert/tls.key -in cert/tls.pem -passin pass:password -passout pass:password -export -out cert/tls.p12
+
+keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks
+
+openssl x509 -outform der -in cert/tls.pem -out cert/tls.cer
+openssl x509 -outform der -in ca/ca.pem -out ca/ca.cer
+
+keytool -noprompt -import -alias tls -storetype PKCS12 -file cert/tls.cer -keystore cert/cacerts -trustcacerts -storepass changeit 
+keytool -noprompt -import -alias ca -storetype PKCS12 -file ca/ca.cer -keystore cert/cacerts -trustcacerts -storepass changeit 
+```
+
+## Populating a private key saved in a key store
+
+Generate a private key
 ```bash
 # We can use the following command to generate our PKCS12 keystore format:
 keytool -genkeypair \
