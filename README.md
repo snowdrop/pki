@@ -42,7 +42,7 @@ openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:p
 
 ## To output the certificates
 ```bash
-openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nokeys 
+openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nokeys -out cert/snowdrop.crt
 ```
 ## To get the public key
 
