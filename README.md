@@ -4,14 +4,15 @@ https://www.baeldung.com/spring-boot-https-self-signed-certificate
 https://www.misterpki.com/pkcs12/
 https://janikvonrotz.ch/2019/01/22/create-pkcs12-key-and-truststore-with-keytool-and-openssl/
 
-# Requirements
+## Requirements
 
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-# Commands
+## Commands
 
+Generate a private key and selfsigned certificate
 ```bash
 # We can use the following command to generate our PKCS12 keystore format:
 keytool -genkeypair \
@@ -25,13 +26,33 @@ keytool -genkeypair \
   -validity 3650
 Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) with a validity of 3,650 days
         for: CN=snowdrop.dev, OU=Middleware, O=Red Hat, L=Florennes, ST=Namur, C=BE
+```
 
-# To check the content of the store
+## To check the content of the store
+```bash
 keytool -list -storetype PKCS12 -keystore snowdrop.p12 -storepass ${KEYSTORE_PASSWORD} 
 OR 
-openssl pkcs12 -info -in snowdrop.p12 -passin pass:password -passout pass:password   
+openssl pkcs12 -info -in snowdrop.p12 -passin pass:password -passout pass:password
 ```
-Create now a pkcs12 using cert manager
+
+## To output the private key
+```bash
+openssl pkcs12 -info -in snowdrop.p12 -passin pass:password -passout pass:password -nodes -nocerts
+```
+
+## To output the certificates
+```bash
+openssl pkcs12 -info -in snowdrop.p12 -passin pass:password -passout pass:password -nokeys 
+```
+## To get the public key
+
+```bash
+openssl pkcs12 -in snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys -out snowdrop.pem
+openssl x509 -pubkey -in snowdrop.pem -noout > snowdrop_pubkey.pem
+```
+
+## Create now a pkcs12 using cert manager
+
 ```bash
 kubectl delete ClusterIssuer/selfsigned-issuer
 kubectl delete Certificate/snowdrop-dev -n cert-manager
