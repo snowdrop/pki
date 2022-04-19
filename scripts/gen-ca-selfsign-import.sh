@@ -137,3 +137,10 @@ openssl x509 -req \
 
 log_line "CYAN" "Combine the server or TLS key and certificate in a PKCS#12 (P12) bundle"
 openssl pkcs12 -inkey ${TEMP_DIR}/tls.key -in ${TEMP_DIR}/tls.pem -passin pass:password -passout pass:password -export -out ${TEMP_DIR}/tls.p12
+
+log_line "CYAN" "Generate the jks file from the p12 file"
+keytool -importkeystore -srckeystore ${TEMP_DIR}/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore ${TEMP_DIR}/tls.jks
+
+log_line "CYAN" "Check the content of the jks store"
+keytool -list -keystore ${TEMP_DIR}/tls.jks -storepass password
+
