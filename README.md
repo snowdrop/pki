@@ -2,7 +2,7 @@
 
 https://www.baeldung.com/spring-boot-https-self-signed-certificate
 https://www.misterpki.com/pkcs12/
-https://janikvonrotz.ch/2019/01/22/create-pkcs12-key-and-truststore-with-keytool-and-openssl/
+https://stackoverflow.com/questions/9497719/extract-public-private-key-from-pkcs12-file-for-later-use-in-ssh-pk-authenticati
 
 ## Requirements
 
@@ -35,20 +35,20 @@ OR
 openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password
 ```
 
-## To output the private key
+## To export the private key
 ```bash
-openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nodes -nocerts > cert/sowdrop.crt
+openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nocerts -nodes | openssl pkcs8 -nocrypt -out cert/sowdrop.key
 ```
 
-## To output the certificates
+## To export the client and CA certificate
 ```bash
-openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nokeys -out cert/snowdrop.crt
+openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys | openssl x509 -out cert/snowdrop.crt
+openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -cacerts -nokeys -chain | openssl x509 -out cert/ca.crt
 ```
-## To get the public key
+## To export the public key
 
 ```bash
-openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys -out cert/snowdrop.pem
-openssl x509 -pubkey -in cert/snowdrop.pem -noout > cert/snowdrop_pub.pem
+openssl x509 -pubkey -in cert/snowdrop.crt -noout > cert/snowdrop_pub.key
 ```
 
 ## Create now a pkcs12 using cert manager
