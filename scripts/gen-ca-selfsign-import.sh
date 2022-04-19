@@ -134,3 +134,6 @@ openssl x509 -req \
     -CAkey ${TEMP_DIR}/ca.key -CAcreateserial \
     -out ${TEMP_DIR}/tls.pem -days 3650 -sha256 \
     -extfile ${TEMP_DIR}/v3.ext
+
+log_line "CYAN" "Combine the server or TLS key and certificate in a PKCS#12 (P12) bundle"
+openssl pkcs12 -inkey ${TEMP_DIR}/tls.key -in ${TEMP_DIR}/tls.pem -passin pass:password -passout pass:password -export -out ${TEMP_DIR}/tls.p12
