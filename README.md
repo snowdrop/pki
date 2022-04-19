@@ -48,7 +48,9 @@ keytool -noprompt -import -alias ca -storetype PKCS12 -file ca/ca.cer -keystore 
 ```
 See all in one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
 
-## Populating a private key saved in a key store
+## TODO: To be reviewed
+
+### Populating a private key saved in a key store
 
 Generate a private key
 ```bash
@@ -66,24 +68,24 @@ Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) wi
         for: CN=snowdrop.dev, OU=Middleware, O=Red Hat, L=Florennes, ST=Namur, C=BE
 ```
 
-## To check the content of the store
+### To check the content of the store
 ```bash
 keytool -list -storetype PKCS12 -keystore cert/snowdrop.p12 -storepass password 
 OR 
 openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password
 ```
 
-## To export the private key
+### To export the private key
 ```bash
 openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nocerts -nodes | openssl pkcs8 -nocrypt -out cert/sowdrop.key
 ```
 
-## To export the client and CA certificate
+### To export the client and CA certificate
 ```bash
 openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys | openssl x509 -out cert/snowdrop.crt
 openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -cacerts -nokeys -chain | openssl x509 -out cert/ca.crt
 ```
-## To export the public key
+### To export the public key
 
 ```bash
 openssl x509 -pubkey -in cert/snowdrop.crt -noout > cert/snowdrop_pub.key
