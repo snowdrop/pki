@@ -123,4 +123,8 @@ openssl pkcs12 -in ${TEMP_DIR}/server/tls.p12 -passin pass:password -passout pas
 log_line "CYAN" "Exporting the public key"
 openssl x509 -pubkey -in ${TEMP_DIR}/server/tls.crt -noout > ${TEMP_DIR}/server/tls_pub.key
 
+log_line "CYAN" "Show p12 content"
+openssl pkcs12 -info -in _temp/server/tls.p12 -passin pass:password -passout pass:password
+
+
 
