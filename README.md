@@ -1,9 +1,9 @@
 # Instructions
 
-https://www.baeldung.com/spring-boot-https-self-signed-certificate
-https://www.misterpki.com/pkcs12/
-https://stackoverflow.com/questions/9497719/extract-public-private-key-from-pkcs12-file-for-later-use-in-ssh-pk-authenticati
-https://gist.github.com/aneer-anwar/a92a9403e6ce5d0710b75e1f478a218b
+- https://www.baeldung.com/spring-boot-https-self-signed-certificate
+- https://www.misterpki.com/pkcs12/
+- https://stackoverflow.com/questions/9497719/extract-public-private-key-from-pkcs12-file-for-later-use-in-ssh-pk-authenticati
+- https://gist.github.com/aneer-anwar/a92a9403e6ce5d0710b75e1f478a218b
 
 ## Requirements
 
@@ -15,16 +15,29 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
 ```bash
 rm -rf {ca,cert} && mkdir -p {ca,cert}
+echo "Generate ca certificate and key file"
 openssl genrsa -out ca/ca.key 2048
-openssl req -x509 -new -nodes -key ca/ca.key -sha256 -days 1024 -subj '/CN=CA Authory/O=Red Hat/L=Florennes/C=BE' -out ca/ca.pem
+openssl req -x509 -new \
+    -nodes \
+    -sha256 \
+    -days 3650 \
+    -subj '/CN=CA Authory/O=Red Hat/L=Florennes/C=BE' \
+    -key ca/ca.key \
+    -out ca/ca.pem
 
+echo "Generate client key & certificate signing request"
+TODO // Reuse content created for TAP project and v3.config
+# Could be done with one command
 openssl genrsa -out cert/tls.key 2048
 openssl req -new -key cert/tls.key -subj '/CN=www.snowdrop.dev/O=Red Hat/L=Florennes/C=BE' -out cert/tls.csr
 
+echo "Sign CSR with CA"
 openssl x509 -req -in cert/tls.csr -CA ca/ca.pem -CAkey ca/ca.key -CAcreateserial -out cert/tls.pem -days 1024 -sha256
 
+echo "Combine your key and certificate in a PKCS#12 (P12) bundle"
 openssl pkcs12 -inkey cert/tls.key -in cert/tls.pem -passin pass:password -passout pass:password -export -out cert/tls.p12
 
+echo "generate jks file from p12 file"
 keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks
 
 openssl x509 -outform der -in cert/tls.pem -out cert/tls.cer
@@ -33,6 +46,7 @@ openssl x509 -outform der -in ca/ca.pem -out ca/ca.cer
 keytool -noprompt -import -alias tls -storetype PKCS12 -file cert/tls.cer -keystore cert/cacerts -trustcacerts -storepass changeit 
 keytool -noprompt -import -alias ca -storetype PKCS12 -file ca/ca.cer -keystore cert/cacerts -trustcacerts -storepass changeit 
 ```
+See all in one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
 
 ## Populating a private key saved in a key store
 
