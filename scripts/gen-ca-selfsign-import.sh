@@ -14,6 +14,7 @@
 
 HOSTNAME=${HOSTNAME:=127.0.0.1}
 FQ_HOSTNAME=${HOSTNAME}.nip.io
+PASSWORD=${:=password}
 TEMP_DIR="_temp"
 
 # Defining some colors for output
@@ -108,19 +109,19 @@ openssl x509 -req \
     -extfile ${TEMP_DIR}/root/v3.ext
 
 log_line "CYAN" "Combine the server or TLS key and certificate in a PKCS#12 (P12) bundle"
-openssl pkcs12 -inkey ${TEMP_DIR}/server/tls.key -in ${TEMP_DIR}/server/tls.crt -CAfile ${TEMP_DIR}/root/ca.pem -chain -passin pass:password -passout pass:password -export -out ${TEMP_DIR}/server/tls.p12
+openssl pkcs12 -inkey ${TEMP_DIR}/server/tls.key -in ${TEMP_DIR}/server/tls.crt -CAfile ${TEMP_DIR}/root/ca.pem -chain -passin pass:${PASSWORD} -passout pass:${PASSWORD} -export -out ${TEMP_DIR}/server/tls.p12
 
 log_line "CYAN" "Generate the jks file from the p12 file"
-keytool -importkeystore -srckeystore ${TEMP_DIR}/server/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore ${TEMP_DIR}/java/tls.jks
+keytool -importkeystore -srckeystore ${TEMP_DIR}/server/tls.p12 -srcstoretype pkcs12 -srcstorepass ${PASSWORD} -deststorepass ${PASSWORD} -destkeystore ${TEMP_DIR}/java/tls.jks
 
 log_line "CYAN" "Check the content of the jks store"
-keytool -list -keystore ${TEMP_DIR}/java/tls.jks -storepass password
+keytool -list -keystore ${TEMP_DIR}/java/tls.jks -storepass ${PASSWORD}
 
 log_line "CYAN" "Exporting the public key"
 openssl x509 -pubkey -in ${TEMP_DIR}/server/tls.crt -noout > ${TEMP_DIR}/server/tls_pub.key
 
 log_line "CYAN" "Show p12 content"
-openssl pkcs12 -info -in _temp/server/tls.p12 -passin pass:password -passout pass:password
+openssl pkcs12 -info -in _temp/server/tls.p12 -passin pass:${PASSWORD} -passout pass:${PASSWORD}
 
 
 
