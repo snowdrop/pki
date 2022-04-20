@@ -8,7 +8,9 @@
 # PASSWORD=supersecret ./scripts/get_store.sh
 
 TEMP_DIR="_temp"
-PASSWORD=${PASSWORD:=password}
+STORE_PASSWORD=${STORE_PASSWORD:=password}
+NAMESPACE=${NAMESPACE:=demo}
+HOSTNAME=${HOSTNAME:=localhost}
 
 mkdir -p ${TEMP_DIR}/cert-manager
 
@@ -16,10 +18,10 @@ for VAL in "keystore" "truststore"; do
   echo "========================================================"
   echo "Getting the $VAL.p12 file from the tls-secret"
   echo "======================================================"
-  kubectl get secret/tls-secret -n demo -o json | jq -r .data.\"${VAL}.p12\" | base64 -d - > ${TEMP_DIR}/cert-manager/${VAL}.p12
+  kubectl get secret/${HOSTNAME}-tls -n ${NAMESPACE} -o json | jq -r .data.\"${VAL}.p12\" | base64 -d - > ${TEMP_DIR}/cert-manager/${VAL}.p12
 
   echo "Reading the $VAL.p12"
   echo "================================================"
-  openssl pkcs12 -info -in ${TEMP_DIR}/cert-manager/${VAL}.p12 -passin pass:${PASSWORD} -passout pass:${PASSWORD}
+  openssl pkcs12 -info -in ${TEMP_DIR}/cert-manager/${VAL}.p12 -passin pass:${STORE_PASSWORD} -passout pass:${STORE_PASSWORD}
 done
 

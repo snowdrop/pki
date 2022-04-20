@@ -1,31 +1,30 @@
 #!/usr/bin/env bash
 #
 # Example:
-# HOSTNAME=127.0.0.1 ./scripts/gen-ca-selfsign-cert-manager.sh
+#  HOSTNAME=localhost \
+#  NAMESPACE=demo \
+#  STORE_PASSWORD=supersecret
+#  ./scripts/gen-ca-selfsign-cert-manager.sh
 #
 # Define the following env vars:
 # - HOSTNAME: Host name or IP address of the HTTPS server (E.g. 127.0.0.1, ...)
+# - NAMESPACE: Kubernetes namespace where the generated TLS secret should be created
+# - STORE_PASSWORD: Password of the keystore and truststore
 
-
-kubectl create ns demo
-kubectl delete clusterissuer/selfsigned-issuer
-kubectl delete certificate/localhost-tls -n demo
-kubectl delete secret/pkcs12-pass -n demo
-kubectl delete secret/tls-secret -n demo
 
 HOSTNAME=${HOSTNAME:=localhost}
+NAMESPACE=${NAMESPACE:=demo}
+STORE_PASSWORD=${STORE_PASSWORD:=supersecret}
+
+kubectl create ns ${NAMESPACE}
+kubectl delete clusterissuer/selfsigned-issuer
+kubectl delete certificate/${HOSTNAME}-tls -n ${NAMESPACE}
+kubectl delete secret/pkcs12-pass -n ${NAMESPACE}
+kubectl delete secret/${HOSTNAME}-tls -n ${NAMESPACE}
+
+kubectl create secret generic pkcs12-pass -n ${NAMESPACE} --from-literal=password=${STORE_PASSWORD}
 
 cat <<EOF | kubectl apply -f -
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: pkcs12-pass
-  namespace: demo
-data:
-  # password is 'supersecret'
-  password: c3VwZXJzZWNyZXQ=
-type: Opaque
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -38,8 +37,8 @@ and Certificate:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: localhost-tls
-  namespace: demo
+  name: ${HOSTNAME}-tls
+  namespace: ${NAMESPACE}
 spec:
   commonName: ${HOSTNAME}
   subject:
@@ -70,7 +69,7 @@ spec:
         name: pkcs12-pass
         key: password
   renewBefore: 360h0m0s
-  secretName: tls-secret
+  secretName: ${HOSTNAME}-tls
   usages:
   - server auth
   - client auth

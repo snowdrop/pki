@@ -6,16 +6,16 @@
 # ./gen-ca-selfsign-import.sh
 #
 # Example:
-# HOSTNAME=127.0.0.1 ./scripts/gen-ca-selfsign-import.sh
+# HOSTNAME=127.0.0.1 STORE_PASSWORD=password ./scripts/gen-ca-selfsign-import.sh
 #
 # Define the following env vars:
 # - HOSTNAME: Host name or IP address of the HTTPS server (E.G. 127.0.0.1, ...)
-# - PASSWORD: password to be used for the keys store. (E.g: password)
+# - STORE_PASSWORD: password to be used for the keys store. (E.g: password)
 #
 
 HOSTNAME=${HOSTNAME:=127.0.0.1}
 FQ_HOSTNAME=${HOSTNAME}.nip.io
-PASSWORD=${PASSWORD:=password}
+STORE_PASSWORD=${STORE_PASSWORD:=password}
 TEMP_DIR="_temp"
 
 # Defining some colors for output
@@ -110,19 +110,19 @@ openssl x509 -req \
     -extfile ${TEMP_DIR}/root/v3.ext
 
 log_line "CYAN" "Combine the server or TLS key and certificate in a PKCS#12 (P12) bundle"
-openssl pkcs12 -inkey ${TEMP_DIR}/server/tls.key -in ${TEMP_DIR}/server/tls.crt -CAfile ${TEMP_DIR}/root/ca.pem -chain -passin pass:${PASSWORD} -passout pass:${PASSWORD} -export -out ${TEMP_DIR}/server/tls.p12
+openssl pkcs12 -inkey ${TEMP_DIR}/server/tls.key -in ${TEMP_DIR}/server/tls.crt -CAfile ${TEMP_DIR}/root/ca.pem -chain -passin pass:${STORE_PASSWORD} -passout pass:${STORE_PASSWORD} -export -out ${TEMP_DIR}/server/tls.p12
 
 log_line "CYAN" "Generate the jks file from the p12 file"
-keytool -importkeystore -srckeystore ${TEMP_DIR}/server/tls.p12 -srcstoretype pkcs12 -srcstorepass ${PASSWORD} -deststorepass ${PASSWORD} -destkeystore ${TEMP_DIR}/java/tls.jks
+keytool -importkeystore -srckeystore ${TEMP_DIR}/server/tls.p12 -srcstoretype pkcs12 -srcstorepass ${STORE_PASSWORD} -deststorepass ${STORE_PASSWORD} -destkeystore ${TEMP_DIR}/java/tls.jks
 
 log_line "CYAN" "Check the content of the jks store"
-keytool -list -keystore ${TEMP_DIR}/java/tls.jks -storepass ${PASSWORD}
+keytool -list -keystore ${TEMP_DIR}/java/tls.jks -storepass ${STORE_PASSWORD}
 
 log_line "CYAN" "Exporting the public key"
 openssl x509 -pubkey -in ${TEMP_DIR}/server/tls.crt -noout > ${TEMP_DIR}/server/tls_pub.key
 
 log_line "CYAN" "Show p12 content"
-openssl pkcs12 -info -in _temp/server/tls.p12 -passin pass:${PASSWORD} -passout pass:${PASSWORD}
+openssl pkcs12 -info -in _temp/server/tls.p12 -passin pass:${STORE_PASSWORD} -passout pass:${STORE_PASSWORD}
 
 # TODO: To be checked if we need them
 #openssl x509 -outform der -in cert/tls.pem -out cert/tls.cer

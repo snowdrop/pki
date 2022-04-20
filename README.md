@@ -44,7 +44,10 @@ The scenario to follow to populate the needed files (ca.crt, tls.crt, tls.key an
 
 Some scripts have been created to simplify this process
 ```bash
-HOSTNAME=localhost ./scripts/gen-ca-selfsign-cert-manager.sh
+HOSTNAME=localhost \
+NAMESPACE=demo \
+STORE_PASSWORD=supersecret \
+./scripts/gen-ca-selfsign-cert-manager.sh
 ```
 Here is an example detailing what we must do to deploy such CRs on a k8s cluster: 
 ```bash
