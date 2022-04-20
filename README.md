@@ -129,7 +129,7 @@ and next check the content generated under `_temp/cert-manager/`
 
 To play with the keystore and trustore populated use the following demo projects:
 - [spring boot](./spring-boot)
-- [quzrkus]()
+- [quarkus]()
 
 # Generate the CA & Server certificate and their keys locally
 
