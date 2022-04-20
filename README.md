@@ -6,7 +6,7 @@ Table of Contents
   * [Requirements](#requirements)
   * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
   * [Demo](#demo)
-  * [Generate the CA &amp; Server certificate and their keys locally](#generate-the-ca--server-certificate-and-their-keys-locally)
+* [Generate the CA &amp; Server certificate and their keys locally](#generate-the-ca--server-certificate-and-their-keys-locally)
 * [Interesting commands](#interesting-commands)
   * [To check the content of the store](#to-check-the-content-of-the-store)
   * [To export the private key](#to-export-the-private-key)
@@ -131,7 +131,7 @@ To play with the keystore and trustore populated use the following demo projects
 - [spring boot](./spring-boot)
 - [quzrkus]()
 
-## Generate the CA & Server certificate and their keys locally
+# Generate the CA & Server certificate and their keys locally
 
 See the all-in-one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
 
