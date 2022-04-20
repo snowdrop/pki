@@ -2,16 +2,15 @@ Table of Contents
 =================
 
 * [Instructions](#instructions)
-    * [Requirements](#requirements)
-    * [Generate the CA &amp; Server certificate and their keys](#generate-the-ca--server-certificate-and-their-keys)
-    * [Interesting commands](#interesting-commands)
-        * [To check the content of the store](#to-check-the-content-of-the-store)
-        * [To export the private key](#to-export-the-private-key)
-        * [To export the client and CA certificate](#to-export-the-client-and-ca-certificate)
-        * [To export the public key](#to-export-the-public-key)
-    * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
-    * [Additional information](#additional-information)
-
+  * [Requirements](#requirements)
+  * [Generate the CA &amp; Server certificate and their keys](#generate-the-ca--server-certificate-and-their-keys)
+  * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
+  * [Interesting commands](#interesting-commands)
+    * [To check the content of the store](#to-check-the-content-of-the-store)
+    * [To export the private key](#to-export-the-private-key)
+    * [To export the client and CA certificate](#to-export-the-client-and-ca-certificate)
+    * [To export the public key](#to-export-the-public-key)
+  * [Additional information](#additional-information)
 
 # Instructions
 
@@ -61,30 +60,6 @@ Generate jks file from p12 file
 keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks 
 ```
 
-## Interesting commands
-
-### To check the content of the store
-```bash
-keytool -list -storetype PKCS12 -keystore cert/snowdrop.p12 -storepass password 
-OR 
-openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password
-```
-
-### To export the private key
-```bash
-openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nocerts -nodes | openssl pkcs8 -nocrypt -out cert/sowdrop.key
-```
-
-### To export the client and CA certificate
-```bash
-openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys | openssl x509 -out cert/snowdrop.crt
-openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -cacerts -nokeys -chain | openssl x509 -out cert/ca.crt
-```
-### To export the public key
-
-```bash
-openssl x509 -pubkey -in cert/snowdrop.crt -noout > cert/snowdrop_pub.key
-```
 
 ## Create a pkcs12 using cert manager
 
@@ -142,6 +117,31 @@ EOF
 Read the secret content
 ```bash
 kubectl get secret/snowdrop-p12 -n cert-manager -o yaml
+```
+
+## Interesting commands
+
+### To check the content of the store
+```bash
+keytool -list -storetype PKCS12 -keystore cert/snowdrop.p12 -storepass password 
+OR 
+openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password
+```
+
+### To export the private key
+```bash
+openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nocerts -nodes | openssl pkcs8 -nocrypt -out cert/sowdrop.key
+```
+
+### To export the client and CA certificate
+```bash
+openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys | openssl x509 -out cert/snowdrop.crt
+openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -cacerts -nokeys -chain | openssl x509 -out cert/ca.crt
+```
+### To export the public key
+
+```bash
+openssl x509 -pubkey -in cert/snowdrop.crt -noout > cert/snowdrop_pub.key
 ```
 
 ## Additional information
