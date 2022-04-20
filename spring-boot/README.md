@@ -13,10 +13,10 @@ cd spring-boot
 mvn package spring-boot:run
 cd ..
 ```
-Finally use curl to call the HTTPS endpoint
+Finally, use curl to call the HTTPS endpoint
 
 ```bash
-curl --cacert _temp/root/ca.pem https://localhost:8443
+curl --cacert _temp/cert-manager/ca.crt https://localhost:8443
 ```
 
 

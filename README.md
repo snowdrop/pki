@@ -141,8 +141,8 @@ EOF
 
 To read the content of the generated certificates (CA and TLS), use the following commands:
 ```bash
-./scripts/read_cert.sh ca.crt
-./scripts/read_cert.sh tls.crt
+./scripts/get_cert_from_secret.sh ca.crt
+./scripts/get_cert_from_secret.sh tls.crt
 
 cat _temp/root/ca.crt | openssl x509 -noout -text > _temp/root/ca.crt.txt
 cat _temp/server/tls.crt | openssl x509 -noout -text > _temp/server/tls.crt.txt
