@@ -5,12 +5,12 @@
 # ./scripts/get_store.sh
 #
 # Example:
-# PASSWORD=supersecret ./scripts/get_store.sh
+# STORE_PASSWORD=supersecret ./scripts/get_store.sh
 
 TEMP_DIR="_temp"
 STORE_PASSWORD=${STORE_PASSWORD:=password}
 NAMESPACE=${NAMESPACE:=demo}
-HOSTNAME=${HOSTNAME:=localhost}
+HOSTNAME=${HOSTNAME:-localhost}
 
 mkdir -p ${TEMP_DIR}/cert-manager
 

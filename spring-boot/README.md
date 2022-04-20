@@ -6,12 +6,17 @@ using the Certificate Manager deployed on a k8s cluster.
 
 This can be achieved by running the following bash scripts:
 ```bash
-HOSTNAME=localhost ./scripts/gen-ca-selfsign-cert-manager.sh
+HOSTNAME=localhost \
+NAMESPACE=demo \
+STORE_PASSWORD=supersecret \
+./scripts/gen-ca-selfsign-cert-manager.sh
 
-PASSWORD=supersecret ./scripts/get_store.sh
+STORE_PASSWORD=supersecret \
+HOSTNAME=localhost \
+./scripts/get_store.sh
 
-./scripts/get_cert_from_secret.sh ca.crt
-./scripts/get_cert_from_secret.sh tls.crt
+HOSTNAME=localhost ./scripts/get_cert_from_secret.sh ca.crt
+HOSTNAME=localhost ./scripts/get_cert_from_secret.sh tls.crt
 ```
 
 Next copy the files `keystore.p12` and `truststore.p12` available under the folder `_temp/cert-manager` within
