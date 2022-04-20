@@ -1,19 +1,18 @@
 Table of Contents
 =================
 
-* [Interesting references](#interesting-references)
+* [References](#references)
 * [Instructions](#instructions)
   * [Requirements](#requirements)
-  * [Generate the CA &amp; Server certificate and their keys locally](#generate-the-ca--server-certificate-and-their-keys-locally)
   * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
-  * [Interesting commands](#interesting-commands)
-    * [To check the content of the store](#to-check-the-content-of-the-store)
-    * [To export the private key](#to-export-the-private-key)
-    * [To export the client and CA certificate](#to-export-the-client-and-ca-certificate)
-    * [To export the public key](#to-export-the-public-key)
+  * [Generate the CA &amp; Server certificate and their keys locally](#generate-the-ca--server-certificate-and-their-keys-locally)
+* [Interesting commands](#interesting-commands)
+  * [To check the content of the store](#to-check-the-content-of-the-store)
+  * [To export the private key](#to-export-the-private-key)
+  * [To export the client and CA certificate](#to-export-the-client-and-ca-certificate)
+  * [To export the public key](#to-export-the-public-key)
   * [Additional information](#additional-information)
-
-# Interesting references
+# References
 
 - https://www.baeldung.com/spring-boot-https-self-signed-certificate
 - https://www.misterpki.com/pkcs12/
@@ -32,41 +31,6 @@ To generate on kubernetes the certificate and keys, install the certificat manag
 
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
-```
-
-## Generate the CA & Server certificate and their keys locally
-
-See the all-in-one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
-
-Generate ca certificate and key file
-```bash
-openssl genrsa -out ca/ca.key 2048
-openssl req -x509 -new \
-    -nodes \
-    -sha256 \
-    -days 3650 \
-    -subj '/CN=CA Authory/O=Red Hat/L=Florennes/C=BE' \
-    -key ca/ca.key \
-    -out ca/ca.crt
-```
-Generate client key & certificate signing request"
-```bash
-# Could be done with one command
-openssl genrsa -out cert/tls.key 2048
-openssl req -new -key cert/tls.key -subj '/CN=www.snowdrop.dev/O=Red Hat/L=Florennes/C=BE' -out cert/tls.csr
-
-echo "Sign CSR with CA"
-openssl x509 -req -in cert/tls.csr -CA ca/ca.crt -CAkey ca/ca.key -CAcreateserial -out cert/tls.pem -days 1024 -sha256
-```
-
-Combine your key and certificate in a PKCS#12 (P12) bundle
-```bash
-openssl pkcs12 -inkey cert/tls.key -in cert/tls.pem -CAfile cert/ca.crt -chain -passin pass:password -passout pass:password -export -out cert/tls.p12
-```
-
-Generate jks file from p12 file
-```bash
-keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks 
 ```
 
 ## Create a pkcs12 using cert manager
@@ -149,27 +113,62 @@ cat _temp/server/tls.crt | openssl x509 -noout -text > _temp/server/tls.crt.txt
 ```
 and next check the content under `_temp/cert-manager/` or `_temp/root` and `_temp/server`
 
+## Generate the CA & Server certificate and their keys locally
 
-## Interesting commands
+See the all-in-one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
 
-### To check the content of the store
+Generate ca certificate and key file
+```bash
+openssl genrsa -out ca/ca.key 2048
+openssl req -x509 -new \
+    -nodes \
+    -sha256 \
+    -days 3650 \
+    -subj '/CN=CA Authory/O=Red Hat/L=Florennes/C=BE' \
+    -key ca/ca.key \
+    -out ca/ca.crt
+```
+Generate client key & certificate signing request"
+```bash
+# Could be done with one command
+openssl genrsa -out cert/tls.key 2048
+openssl req -new -key cert/tls.key -subj '/CN=www.snowdrop.dev/O=Red Hat/L=Florennes/C=BE' -out cert/tls.csr
+
+echo "Sign CSR with CA"
+openssl x509 -req -in cert/tls.csr -CA ca/ca.crt -CAkey ca/ca.key -CAcreateserial -out cert/tls.pem -days 1024 -sha256
+```
+
+Combine your key and certificate in a PKCS#12 (P12) bundle
+```bash
+openssl pkcs12 -inkey cert/tls.key -in cert/tls.pem -CAfile cert/ca.crt -chain -passin pass:password -passout pass:password -export -out cert/tls.p12
+```
+
+Generate jks file from p12 file
+```bash
+keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks 
+```
+
+
+# Interesting commands
+
+## To check the content of the store
 ```bash
 keytool -list -storetype PKCS12 -keystore cert/snowdrop.p12 -storepass password 
 OR 
 openssl pkcs12 -info -in cert/snowdrop.p12 -passin pass:password -passout pass:password
 ```
 
-### To export the private key
+## To export the private key
 ```bash
 openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -nocerts -nodes | openssl pkcs8 -nocrypt -out cert/sowdrop.key
 ```
 
-### To export the client and CA certificate
+## To export the client and CA certificate
 ```bash
 openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -clcerts -nokeys | openssl x509 -out cert/snowdrop.crt
 openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:password -cacerts -nokeys -chain | openssl x509 -out cert/ca.crt
 ```
-### To export the public key
+## To export the public key
 
 ```bash
 openssl x509 -pubkey -in cert/snowdrop.crt -noout > cert/snowdrop_pub.key
