@@ -9,12 +9,13 @@
 # HOSTNAME=127.0.0.1 ./scripts/gen-ca-selfsign-import.sh
 #
 # Define the following env vars:
-# - HOSTNAME: Host name or IP address of the HTTPS server
+# - HOSTNAME: Host name or IP address of the HTTPS server (E.G. 127.0.0.1, ...)
+# - PASSWORD: password to be used for the keys store. (E.g: password)
 #
 
 HOSTNAME=${HOSTNAME:=127.0.0.1}
 FQ_HOSTNAME=${HOSTNAME}.nip.io
-PASSWORD=${:=password}
+PASSWORD=${PASSWORD:=password}
 TEMP_DIR="_temp"
 
 # Defining some colors for output
