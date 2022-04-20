@@ -1,9 +1,10 @@
 Table of Contents
 =================
 
+* [Interesting references](#interesting-references)
 * [Instructions](#instructions)
   * [Requirements](#requirements)
-  * [Generate the CA &amp; Server certificate and their keys](#generate-the-ca--server-certificate-and-their-keys)
+  * [Generate the CA &amp; Server certificate and their keys locally](#generate-the-ca--server-certificate-and-their-keys-locally)
   * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
   * [Interesting commands](#interesting-commands)
     * [To check the content of the store](#to-check-the-content-of-the-store)
@@ -12,22 +13,30 @@ Table of Contents
     * [To export the public key](#to-export-the-public-key)
   * [Additional information](#additional-information)
 
-# Instructions
+# Interesting references
 
 - https://www.baeldung.com/spring-boot-https-self-signed-certificate
 - https://www.misterpki.com/pkcs12/
 - https://stackoverflow.com/questions/9497719/extract-public-private-key-from-pkcs12-file-for-later-use-in-ssh-pk-authenticati
 - https://gist.github.com/aneer-anwar/a92a9403e6ce5d0710b75e1f478a218b
 
+# Instructions
+
 ## Requirements
+
+To generate locally the certificate and key, the following tools are needed:
+- openssl
+- keytool
+
+To generate on kubernetes the certificate and keys, install the certificat manager project
 
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-## Generate the CA & Server certificate and their keys
+## Generate the CA & Server certificate and their keys locally
 
-See the all in one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
+See the all-in-one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
 
 Generate ca certificate and key file
 ```bash
@@ -59,7 +68,6 @@ Generate jks file from p12 file
 ```bash
 keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks 
 ```
-
 
 ## Create a pkcs12 using cert manager
 
