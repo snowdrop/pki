@@ -5,6 +5,7 @@ Table of Contents
 * [Instructions](#instructions)
   * [Requirements](#requirements)
   * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
+  * [Demo](#demo)
   * [Generate the CA &amp; Server certificate and their keys locally](#generate-the-ca--server-certificate-and-their-keys-locally)
 * [Interesting commands](#interesting-commands)
   * [To check the content of the store](#to-check-the-content-of-the-store)
@@ -12,6 +13,7 @@ Table of Contents
   * [To export the client and CA certificate](#to-export-the-client-and-ca-certificate)
   * [To export the public key](#to-export-the-public-key)
   * [Additional information](#additional-information)
+
 # References
 
 - https://www.baeldung.com/spring-boot-https-self-signed-certificate
@@ -35,6 +37,16 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
 ## Create a pkcs12 using cert manager
 
+The scenario to follow to populate using the Certificate Manager is quite simple and will need to create a:
+- Keystore secret
+- Certificate CR containing the information about the hostname, machine to secure using HTTPS/TLS
+- Self signed Issuer CR 
+
+Some scripts have been created to simplify this process
+```bash
+HOSTNAME=localhost ./scripts/gen-ca-selfsign-cert-manager.sh
+```
+Here is an example detailing what we must do to deploy such CRs on a k8s cluster: 
 ```bash
 kubectl create ns demo
 kubectl delete clusterissuer/selfsigned-issuer
@@ -113,6 +125,12 @@ cat _temp/server/tls.crt | openssl x509 -noout -text > _temp/server/tls.crt.txt
 ```
 and next check the content under `_temp/cert-manager/` or `_temp/root` and `_temp/server`
 
+## Demo
+
+To play with the keystore and trustore populated use the following demo projects:
+- [spring boot](./spring-boot)
+- [quzrkus]()
+
 ## Generate the CA & Server certificate and their keys locally
 
 See the all-in-one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
@@ -147,7 +165,6 @@ Generate jks file from p12 file
 ```bash
 keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks 
 ```
-
 
 # Interesting commands
 
