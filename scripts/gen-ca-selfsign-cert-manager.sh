@@ -40,6 +40,7 @@ metadata:
   name: ${HOSTNAME}-tls
   namespace: ${NAMESPACE}
 spec:
+  isCA: false
   commonName: ${HOSTNAME}
   subject:
     organizationalUnits:
@@ -68,7 +69,8 @@ spec:
       passwordSecretRef:
         name: pkcs12-pass
         key: password
-  renewBefore: 360h0m0s
+  duration: 8760h
+  renewBefore: 360h
   secretName: ${HOSTNAME}-tls
   usages:
   - server auth
