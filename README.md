@@ -72,9 +72,10 @@ keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstore
 ## Create a pkcs12 using cert manager
 
 ```bash
-kubectl delete ClusterIssuer/selfsigned-issuer
-kubectl delete Certificate/snowdrop-dev -n cert-manager
-kubectl delete secret/snowdrop-p12 -n cert-manager
+kubectl create ns demo
+kubectl delete clusterissuer/selfsigned-issuer
+kubectl delete certificate/snowdrop-dev -n demo
+kubectl delete secret/snowdrop-p12 -n demo
 cat <<EOF | kubectl apply -f -
 ---
 apiVersion: cert-manager.io/v1
@@ -89,7 +90,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: snowdrop-dev
-  namespace: cert-manager
+  namespace: demo
 spec:
   commonName: snowdrop.dev
   subject:
@@ -124,7 +125,7 @@ EOF
 
 Read the secret content
 ```bash
-kubectl get secret/snowdrop-p12 -n cert-manager -o yaml
+kubectl get secret/snowdrop-p12 -n demo -o yaml
 ```
 
 ## Interesting commands
