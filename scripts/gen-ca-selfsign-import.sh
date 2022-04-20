@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# This scrHOSTNAMEt generates a CA cert/key and selfsigned cert/key for a Hostname
+# This script generates a CA cert/key and selfsigned cert/key for a Hostname
 # Execute this command locally
 #
 # ./gen-ca-selfsign-import.sh
