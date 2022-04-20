@@ -3,15 +3,15 @@ Table of Contents
 
 * [Instructions](#instructions)
     * [Requirements](#requirements)
-    * [Generate CA key &amp; certificate](#generate-ca-key--certificate)
-    * [TODO: To be reviewed](#todo-to-be-reviewed)
-        * [Populating a private key saved in a key store](#populating-a-private-key-saved-in-a-key-store)
+    * [Generate the CA &amp; Server certificate and their keys](#generate-the-ca--server-certificate-and-their-keys)
+    * [Interesting commands](#interesting-commands)
         * [To check the content of the store](#to-check-the-content-of-the-store)
         * [To export the private key](#to-export-the-private-key)
         * [To export the client and CA certificate](#to-export-the-client-and-ca-certificate)
         * [To export the public key](#to-export-the-public-key)
-    * [Create now a pkcs12 using cert manager](#create-now-a-pkcs12-using-cert-manager)
+    * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
     * [Additional information](#additional-information)
+
 
 # Instructions
 
@@ -26,11 +26,12 @@ Table of Contents
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-## Generate CA key & certificate
+## Generate the CA & Server certificate and their keys
 
+See the all in one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
+
+Generate ca certificate and key file
 ```bash
-rm -rf {ca,cert} && mkdir -p {ca,cert}
-echo "Generate ca certificate and key file"
 openssl genrsa -out ca/ca.key 2048
 openssl req -x509 -new \
     -nodes \
@@ -39,49 +40,28 @@ openssl req -x509 -new \
     -subj '/CN=CA Authory/O=Red Hat/L=Florennes/C=BE' \
     -key ca/ca.key \
     -out ca/ca.pem
-
-echo "Generate client key & certificate signing request"
-TODO // Reuse content created for TAP project and v3.config
+```
+Generate client key & certificate signing request"
+```bash
 # Could be done with one command
 openssl genrsa -out cert/tls.key 2048
 openssl req -new -key cert/tls.key -subj '/CN=www.snowdrop.dev/O=Red Hat/L=Florennes/C=BE' -out cert/tls.csr
 
 echo "Sign CSR with CA"
 openssl x509 -req -in cert/tls.csr -CA ca/ca.pem -CAkey ca/ca.key -CAcreateserial -out cert/tls.pem -days 1024 -sha256
-
-echo "Combine your key and certificate in a PKCS#12 (P12) bundle"
-openssl pkcs12 -inkey cert/tls.key -in cert/tls.pem -passin pass:password -passout pass:password -export -out cert/tls.p12
-
-echo "generate jks file from p12 file"
-keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks
-
-openssl x509 -outform der -in cert/tls.pem -out cert/tls.cer
-openssl x509 -outform der -in ca/ca.pem -out ca/ca.cer
-
-keytool -noprompt -import -alias tls -storetype PKCS12 -file cert/tls.cer -keystore cert/cacerts -trustcacerts -storepass changeit 
-keytool -noprompt -import -alias ca -storetype PKCS12 -file ca/ca.cer -keystore cert/cacerts -trustcacerts -storepass changeit 
 ```
-See all in one instructions script: [gen-ca-selfsign-import.sh](./scripts/gen-ca-selfsign-import.sh)
 
-## TODO: To be reviewed
-
-### Populating a private key saved in a key store
-
-Generate a private key
+Combine your key and certificate in a PKCS#12 (P12) bundle
 ```bash
-# We can use the following command to generate our PKCS12 keystore format:
-keytool -genkeypair \
-  -alias snowdrop \
-  -keyalg RSA \
-  -keysize 2048 \
-  -dname "CN=snowdrop.dev,OU=Middleware,O=Red Hat,L=Florennes,S=Namur,C=BE" \
-  -storetype PKCS12 \
-  -keystore cert/snowdrop.p12 \
-  -storepass password \
-  -validity 3650
-Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) with a validity of 3,650 days
-        for: CN=snowdrop.dev, OU=Middleware, O=Red Hat, L=Florennes, ST=Namur, C=BE
+openssl pkcs12 -inkey cert/tls.key -in cert/tls.pem -CAfile cert/ca.pem -chain -passin pass:password -passout pass:password -export -out cert/tls.p12
 ```
+
+Generate jks file from p12 file
+```bash
+keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstorepass password -deststorepass password -destkeystore cert/tls.jks 
+```
+
+## Interesting commands
 
 ### To check the content of the store
 ```bash
@@ -106,7 +86,7 @@ openssl pkcs12 -in cert/snowdrop.p12 -passin pass:password -passout pass:passwor
 openssl x509 -pubkey -in cert/snowdrop.crt -noout > cert/snowdrop_pub.key
 ```
 
-## Create now a pkcs12 using cert manager
+## Create a pkcs12 using cert manager
 
 ```bash
 kubectl delete ClusterIssuer/selfsigned-issuer

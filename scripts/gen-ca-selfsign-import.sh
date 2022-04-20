@@ -123,5 +123,12 @@ openssl x509 -pubkey -in ${TEMP_DIR}/server/tls.crt -noout > ${TEMP_DIR}/server/
 log_line "CYAN" "Show p12 content"
 openssl pkcs12 -info -in _temp/server/tls.p12 -passin pass:${PASSWORD} -passout pass:${PASSWORD}
 
+# TODO: To be checked if we need them
+#openssl x509 -outform der -in cert/tls.pem -out cert/tls.cer
+#openssl x509 -outform der -in ca/ca.pem -out ca/ca.cer
+
+#keytool -noprompt -import -alias tls -storetype PKCS12 -file cert/tls.cer -keystore cert/cacerts -trustcacerts -storepass changeit
+#keytool -noprompt -import -alias ca -storetype PKCS12 -file ca/ca.cer -keystore cert/cacerts -trustcacerts -storepass changeit
+
 
 
