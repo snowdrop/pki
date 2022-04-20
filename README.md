@@ -37,7 +37,7 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
 ## Create a pkcs12 using cert manager
 
-The scenario to follow to populate using the Certificate Manager is quite simple and will need to create a:
+The scenario to follow to populate the needed files (ca.crt, tls.crt, tls.key and keystore.p12) using the Certificate Manager is quite simple and will need to create a:
 - Keystore secret
 - Certificate CR containing the information about the hostname, machine to secure using HTTPS/TLS
 - Self signed Issuer CR 
