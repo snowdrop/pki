@@ -123,10 +123,16 @@ spec:
 EOF
 ```
 
-Read the secret content
+To read the content of the generated certificates (CA and TLS), use the following commands:
 ```bash
-kubectl get secret/snowdrop-p12 -n demo -o yaml
+./scripts/read_cert.sh ca.crt
+./scripts/read_cert.sh tls.crt
+
+cat _temp/root/ca.pem | openssl x509 -noout -text > _temp/root/ca.crt.txt
+cat _temp/server/tls.crt | openssl x509 -noout -text > _temp/server/tls.crt.txt
 ```
+and next check the content under `_temp/cert-manager/` or `_temp/root` and `_temp/server`
+
 
 ## Interesting commands
 
