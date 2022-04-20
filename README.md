@@ -120,8 +120,8 @@ To read the content of the generated certificates (CA and TLS), use the followin
 ./scripts/get_cert_from_secret.sh ca.crt
 ./scripts/get_cert_from_secret.sh tls.crt
 
-cat _temp/root/ca.crt | openssl x509 -noout -text > _temp/root/ca.crt.txt
-cat _temp/server/tls.crt | openssl x509 -noout -text > _temp/server/tls.crt.txt
+cat _temp/cert-manager/ca.crt | openssl x509 -noout -text > _temp/cert-manager/ca.crt.txt
+cat _temp/cert-manager/tls.crt | openssl x509 -noout -text > _temp/cert-manager/tls.crt.txt
 ```
 and next check the content generated under `_temp/cert-manager/`
 
