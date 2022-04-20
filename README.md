@@ -123,7 +123,7 @@ To read the content of the generated certificates (CA and TLS), use the followin
 cat _temp/root/ca.crt | openssl x509 -noout -text > _temp/root/ca.crt.txt
 cat _temp/server/tls.crt | openssl x509 -noout -text > _temp/server/tls.crt.txt
 ```
-and next check the content under `_temp/cert-manager/` or `_temp/root` and `_temp/server`
+and next check the content generated under `_temp/cert-manager/`
 
 ## Demo
 
