@@ -47,7 +47,7 @@ openssl req -x509 -new \
     -days 3650 \
     -subj '/CN=CA Authory/O=Red Hat/L=Florennes/C=BE' \
     -key ca/ca.key \
-    -out ca/ca.pem
+    -out ca/ca.crt
 ```
 Generate client key & certificate signing request"
 ```bash
@@ -56,12 +56,12 @@ openssl genrsa -out cert/tls.key 2048
 openssl req -new -key cert/tls.key -subj '/CN=www.snowdrop.dev/O=Red Hat/L=Florennes/C=BE' -out cert/tls.csr
 
 echo "Sign CSR with CA"
-openssl x509 -req -in cert/tls.csr -CA ca/ca.pem -CAkey ca/ca.key -CAcreateserial -out cert/tls.pem -days 1024 -sha256
+openssl x509 -req -in cert/tls.csr -CA ca/ca.crt -CAkey ca/ca.key -CAcreateserial -out cert/tls.pem -days 1024 -sha256
 ```
 
 Combine your key and certificate in a PKCS#12 (P12) bundle
 ```bash
-openssl pkcs12 -inkey cert/tls.key -in cert/tls.pem -CAfile cert/ca.pem -chain -passin pass:password -passout pass:password -export -out cert/tls.p12
+openssl pkcs12 -inkey cert/tls.key -in cert/tls.pem -CAfile cert/ca.crt -chain -passin pass:password -passout pass:password -export -out cert/tls.p12
 ```
 
 Generate jks file from p12 file
@@ -128,7 +128,7 @@ To read the content of the generated certificates (CA and TLS), use the followin
 ./scripts/read_cert.sh ca.crt
 ./scripts/read_cert.sh tls.crt
 
-cat _temp/root/ca.pem | openssl x509 -noout -text > _temp/root/ca.crt.txt
+cat _temp/root/ca.crt | openssl x509 -noout -text > _temp/root/ca.crt.txt
 cat _temp/server/tls.crt | openssl x509 -noout -text > _temp/server/tls.crt.txt
 ```
 and next check the content under `_temp/cert-manager/` or `_temp/root` and `_temp/server`
