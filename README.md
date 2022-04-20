@@ -75,9 +75,19 @@ keytool -importkeystore -srckeystore cert/tls.p12 -srcstoretype pkcs12 -srcstore
 kubectl create ns demo
 kubectl delete clusterissuer/selfsigned-issuer
 kubectl delete certificate/snowdrop-dev -n demo
-kubectl delete secret/snowdrop-p12 -n demo
+kubectl delete secret/pkcs12-pass -n demo
+kubectl delete secret/tls-secret -n demo
 cat <<EOF | kubectl apply -f -
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pkcs12-pass
+  namespace: demo
+data:
+  password: c3VwZXJzZWNyZXQ=
+type: Opaque  
+---  
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -115,8 +125,14 @@ spec:
     algorithm: RSA
     encoding: PKCS8
     size: 2048
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef:
+        name: pkcs12-pass
+        key: password  
   renewBefore: 360h0m0s
-  secretName: snowdrop-p12
+  secretName: tls-secret
   usages:
   - server auth
   - client auth
