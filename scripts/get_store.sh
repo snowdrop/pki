@@ -12,13 +12,12 @@ PASSWORD=${PASSWORD:=password}
 
 mkdir -p ${TEMP_DIR}/cert-manager
 
-echo "================================================"
-echo "Got the trust and keystore p12 files from the tls-secret"
-echo "================================================"
-
 for VAL in "keystore" "truststore"; do
+  echo "========================================================"
+  echo "Getting the $VAL.p12 file from the tls-secret"
+  echo "======================================================"
   kubectl get secret/tls-secret -n demo -o json | jq -r .data.\"${VAL}.p12\" | base64 -d - > ${TEMP_DIR}/cert-manager/${VAL}.p12
-  echo "================================================"
+
   echo "Reading the $VAL.p12"
   echo "================================================"
   openssl pkcs12 -info -in ${TEMP_DIR}/cert-manager/${VAL}.p12 -passin pass:${PASSWORD} -passout pass:${PASSWORD}
