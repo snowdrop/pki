@@ -6,14 +6,6 @@ def validate_namespace():
   data.values.namespace or assert.fail("Kubernetes namespace should be provided")
 end
 
-def generate_harbor_tls():
-  for key in ["tls.crt", "tls.key"]:
-    if getattr(data.values.Certificate, key):
-      return False
-    end
-  end
-  return True
-end
 
 def validate_all():
   validate_funcs = [

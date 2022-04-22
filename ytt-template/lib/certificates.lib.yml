@@ -30,6 +30,7 @@ spec:
     secretName: #@ secret_name
 #@ end
 
+#! Generate a Selfsigned Issuer - see: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Issuer
 #@ def get_self_signed_issuer():
 #@   return overlay.apply(get_issuer(), self_signed_issuer())
 #@ end
@@ -54,15 +55,26 @@ metadata:
   namespace: "certificate-namespace"
 spec:
   secretName: "ca-key-pair"
-  duration: 8760h
-  renewBefore: 360h
   commonName: "certificate"
   isCA: false
+  subject:
   usages:
     - server auth
     - client auth
+  privateKey:
+    algorithm: "algorithm"
+    encoding: "encoding"
+    size: "size"
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef:
+        name: pkcs12-pass
+        key: password
   dnsNames: []
   ipAddresses: []
+  duration: 8760h
+  renewBefore: 360h
   issuerRef:
     name: "ca-issuer"
     kind: Issuer
@@ -81,10 +93,21 @@ spec:
   ipAddresses:
     #@ for ip in ips:
     - #@ ip
-      #@ end
-      #@ end
+    #@ end
+#@ end
 
-    #@ def server_certificate():
+#@ def keystore(type):
+spec:
+  keystores:
+    #@overlay/insert
+    pkcs12:
+      create: true
+      passwordSecretRef:
+        name: pkcs12-pass
+        key: password
+#@ end
+
+#@ def server_certificate():
 spec:
   #@overlay/replace
   usages:
