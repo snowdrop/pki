@@ -49,7 +49,7 @@ certificate:
 
   #! https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.PKCS12Keystore
   keystores:
-    type: pkcs12
+    type: #! pkcs12 or jks
     create: true
     #! https://cert-manager.io/docs/reference/api-docs/#meta.cert-manager.io/v1.SecretKeySelector
     passwordSecretRef:

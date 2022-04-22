@@ -66,11 +66,6 @@ spec:
     encoding: "encoding"
     size: "size"
   keystores:
-    pkcs12:
-      create: true
-      passwordSecretRef:
-        name: pkcs12-pass
-        key: password
   dnsNames: []
   ipAddresses: []
   duration: 8760h
@@ -111,10 +106,11 @@ spec:
 #@ end
 
 #@ def keystore(keystore):
+#@yaml/text-templated-strings
 spec:
   keystores:
     #@overlay/match missing_ok=True
-    pkcs12:
+    "(@= keystore.type @)":
       create: #@ keystore.create
       passwordSecretRef:
         name: #@ keystore.passwordSecretRef.name

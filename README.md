@@ -147,6 +147,7 @@ certificate:
   dnsNames:
   - spring-boot.10.20.1.1.nip.io
   keystores:
+    type: pkcs12
     passwordSecretRef:
       name: pkcs12-secret
       key: password
