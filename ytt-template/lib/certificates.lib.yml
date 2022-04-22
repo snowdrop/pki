@@ -110,15 +110,15 @@ spec:
     #@ end
 #@ end
 
-#@ def keystore(type):
+#@ def keystore(keystore):
 spec:
   keystores:
     #@overlay/insert
     pkcs12:
-      create: true
+      create: #@ keystore.create
       passwordSecretRef:
-        name: pkcs12-pass
-        key: password
+        name: #@ keystore.passwordSecretRef.name
+        key: #@ keystore.passwordSecretRef.key
 #@ end
 
 #@ def server_certificate():
@@ -188,14 +188,10 @@ spec:
 #@   return [name, full_name, svc_name, svc_cluster_local_name]
 #@ end
 
-#@ def certificate_generate_args(certificate_func, name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name, args):
-#@  return overlay.apply(certificate_func(args), metadata(name, namespace), certificate_secret(secret_name), certificate_details(duration, renew_before, common_name, dns_names), certificate_issuer(issuer_name))
+#@ def certificate_generate(certificate_func, name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, cert_keystore, issuer_name):
+#@  return overlay.apply(certificate_func(), metadata(name, namespace), certificate_secret(secret_name), certificate_details(duration, renew_before, common_name, dns_names), x509_subject(cert_subject), keystore(cert_keystore), certificate_issuer(issuer_name))
 #@ end
 
-#@ def certificate_generate(certificate_func, name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, issuer_name):
-#@  return overlay.apply(certificate_func(), metadata(name, namespace), certificate_secret(secret_name), certificate_details(duration, renew_before, common_name, dns_names), x509_subject(cert_subject), certificate_issuer(issuer_name))
-#@ end
-
-#@ def generate_certificate(name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, issuer_name):
-#@   return certificate_generate(get_certificate, name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, issuer_name)
+#@ def generate_certificate(name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, cert_keystore, issuer_name):
+#@   return certificate_generate(get_certificate, name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, cert_keystore, issuer_name)
 #@ end

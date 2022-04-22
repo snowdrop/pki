@@ -11,6 +11,7 @@
 
 #@ cert = name + "-cert"
 #@ cert_subject = data.values.certificate.subject
+#@ cert_keystore = data.values.certificate.keystores
 #@ cert_secret_name = name + "-tls"
 #@ cert_duration = data.values.certificate.duration
 #@ cert_renew_before = data.values.certificate.renewBefore
@@ -18,5 +19,5 @@
 
 #@ if data.values.certificate.generate:
 --- #@ generate_self_signed_issuer(name,namespace)
---- #@ generate_certificate(name,namespace,cert_duration,cert_renew_before,cert_secret_name,common_name,dns_names,cert_subject,issuer_name)
+--- #@ generate_certificate(name,namespace,cert_duration,cert_renew_before,cert_secret_name,common_name,dns_names,cert_subject, cert_keystore, issuer_name)
 #@ end
