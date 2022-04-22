@@ -5,8 +5,8 @@ Table of Contents
 * [Instructions](#instructions)
   * [Requirements](#requirements)
   * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
-  * [Demo](#demo)
   * [Generate the Certificate and Issuer using ytt](#generate-the-certificate-and-issuer-using-ytt)
+  * [Demo](#demo)
 * [Generate the CA &amp; Server certificate and their keys locally](#generate-the-ca--server-certificate-and-their-keys-locally)
 * [Interesting commands](#interesting-commands)
   * [To check the content of the store](#to-check-the-content-of-the-store)
@@ -129,11 +129,8 @@ cat _temp/cert-manager/tls.crt | openssl x509 -noout -text > _temp/cert-manager/
 ```
 and next check the content generated under `_temp/cert-manager/`
 
-## Demo
-
-To play with the keystore and trustore populated use the following demo projects:
-- [spring boot](./spring-boot)
-- [quarkus]()
+**NOTE**: As the script or the instructions will generate a Certificate using hard values, then I recommand that you look to the next section in order to generate 
+it using the YTT template
 
 ## Generate the Certificate and Issuer using ytt
 
@@ -160,6 +157,12 @@ ytt -f ytt-template \
     -v certificate.commonName=spring-boot.10.20.1.1.nip.io \
     --data-value-yaml "certificate.dnsNames=[spring-boot.10.20.1.1.nip.io]"
 ```
+
+## Demo
+
+To play with the keystore and trustore populated use the following demo projects:
+- [spring boot](./spring-boot)
+- [quarkus]()
 
 # Generate the CA & Server certificate and their keys locally
 
