@@ -1,0 +1,7 @@
+#@data/values-schema
+#@schema/type any=True
+---
+#! Doc: https://carvel.dev/ytt/docs/v0.40.0/how-to-write-schema/
+#! Schema contents
+
+namespace: ""

@@ -1,0 +1,39 @@
+#@data/values
+---
+#! Doc: https://carvel.dev/ytt/docs/v0.40.0/how-to-use-data-values/
+
+#! Name of the HTTPS/TLS application, microservice, endpoint.
+name:
+
+#! The namespace in which to deploy the generated resources such as: Secret, Certificate and Issuer.
+namespace: demo
+
+#! Settings for the TLS certificate for securing the HTTPS/TLS communication.
+certificate:
+  #! If true, generate the Certificate, Issuer CRDs processed by the Certificate Manager on k8s (if installed)
+  generate: true
+
+  #! If true, set the Issuer spec value to
+  #! spec:
+  #!  selfSigned: {}
+  selfSigned: true
+
+  #! How long the certificate should be valid for.
+  duration: 8760h
+
+  #! How long before expiration the certificates should be renewed.
+  renewBefore: 360h
+
+  #! Endpoint hostname
+  commonName: localhost
+
+  #! X.509 Subject
+  subject:
+    organizationalUnits: []
+    organizations: []
+    localities: []
+    provinces: []
+    #! List of country name defined as two-letter country code (ISO 3166).
+    countries: []
+    #! Subject Alternative Names. List of additional DNS hostnames to access the endpoint
+    dnsNames: []
