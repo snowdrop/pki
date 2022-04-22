@@ -141,8 +141,20 @@ To generate within the terminal the Certificate and Issuer YAML, simply execute 
 ```bash
 ytt -f ytt-template
 ```
-**NOTE**: Change the needed values within the `values.yml` file or pass the parameters from the command line such as:
+**NOTE**: Change the needed values within your `my-values.yml` file or pass the parameters from the command line such as:
 ```bash
+cat <<EOF > my-values.yml
+name: spring-boot
+certificate:
+  commonName: spring-boot.10.20.1.1.nip.io
+  dnsNames:
+  - spring-boot.10.20.1.1.nip.io
+EOF
+
+ytt --data-values-file my-values.yml -f ytt-template
+
+OR
+
 ytt -f ytt-template \
     -v name=spring-boot \
     -v certificate.commonName=spring-boot.10.20.1.1.nip.io \
