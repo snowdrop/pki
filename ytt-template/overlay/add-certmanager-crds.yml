@@ -12,7 +12,7 @@
 #@ cert = name + "-cert"
 #@ cert_subject = data.values.certificate.subject
 #@ cert_keystore = data.values.certificate.keystores
-#@ cert_secret_name = data.values.secretName if data.values.secretName else name + "-tls"
+#@ cert_secret_name = data.values.secretName or name + "-tls"
 #@ cert_duration = data.values.certificate.duration
 #@ cert_renew_before = data.values.certificate.renewBefore
 #@ cert_common_name = name
