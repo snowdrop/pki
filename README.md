@@ -146,6 +146,10 @@ certificate:
   commonName: spring-boot.10.20.1.1.nip.io
   dnsNames:
   - spring-boot.10.20.1.1.nip.io
+  keystores:
+    passwordSecretRef:
+      name: pkcs12-secret
+      key: password
 EOF
 
 ytt --data-values-file my-values.yml -f ytt-template

@@ -113,7 +113,7 @@ spec:
 #@ def keystore(keystore):
 spec:
   keystores:
-    #@overlay/insert
+    #@overlay/match missing_ok=True
     pkcs12:
       create: #@ keystore.create
       passwordSecretRef:
