@@ -22,7 +22,7 @@
 #@ envoy_secret = envoy_name + "cert"
 #@ envoy_cert_common_name = envoy_name
 
-#@ if data.values.certificates.useCertManager:
+#@ if data.values.certificate.generate:
 --- #@ generate_self_signed_issuer(endpoint_self_signed_ca_issuer, endpoint_namespace)
 --- #@ generate_ca_certificate(endpoint_ca, endpoint_namespace, endpoint_cert_duration, endpoint_cert_renew_before, endpoint_ca_key_pair, [endpoint_organization], endpoint_ca_common_name, [endpoint_ca_dns_name], endpoint_self_signed_ca_issuer)
 --- #@ generate_ca_issuer(endpoint_ca_issuer, endpoint_namespace, endpoint_ca_key_pair)

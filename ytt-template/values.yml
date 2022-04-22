@@ -1,9 +1,8 @@
+#! Doc: https://carvel.dev/ytt/docs/v0.40.0/how-to-use-data-values/
 #@data/values
 ---
-#! Doc: https://carvel.dev/ytt/docs/v0.40.0/how-to-use-data-values/
-
 #! Name of the HTTPS/TLS application, microservice, endpoint.
-name:
+endpoint: ""
 
 #! The namespace in which to deploy the generated resources such as: Secret, Certificate and Issuer.
 namespace: demo
