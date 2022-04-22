@@ -6,6 +6,7 @@ Table of Contents
   * [Requirements](#requirements)
   * [Create a pkcs12 using cert manager](#create-a-pkcs12-using-cert-manager)
   * [Demo](#demo)
+  * [Generate the Certificate and Issuer using ytt](#generate-the-certificate-and-issuer-using-ytt)
 * [Generate the CA &amp; Server certificate and their keys locally](#generate-the-ca--server-certificate-and-their-keys-locally)
 * [Interesting commands](#interesting-commands)
   * [To check the content of the store](#to-check-the-content-of-the-store)
@@ -133,6 +134,20 @@ and next check the content generated under `_temp/cert-manager/`
 To play with the keystore and trustore populated use the following demo projects:
 - [spring boot](./spring-boot)
 - [quarkus]()
+
+## Generate the Certificate and Issuer using ytt
+
+To generate within the terminal the Certificate and Issuer YAML, simply execute the following [ytt](https://carvel.dev/ytt/docs/v0.40.0/install/) command
+```bash
+ytt -f ytt-template
+```
+**NOTE**: Change the needed values within the `values.yml` file or pass the parameters from the command line such as:
+```bash
+ytt -f ytt-template \
+    -v name=spring-boot \
+    -v certificate.commonName=spring-boot.10.20.1.1.nip.io \
+    --data-value-yaml "certificate.dnsNames=[spring-boot.10.20.1.1.nip.io]"
+```
 
 # Generate the CA & Server certificate and their keys locally
 
