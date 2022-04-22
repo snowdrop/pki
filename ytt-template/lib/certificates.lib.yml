@@ -87,12 +87,26 @@ spec:
   isCA: #@ isCA
 #@ end
 
+#@ def x509_subject(subject):
+spec:
+  subject: #@ subject
+#@ end
+
 #@ def ip_address(ips):
 spec:
   #@overlay/replace
   ipAddresses:
     #@ for ip in ips:
     - #@ ip
+    #@ end
+#@ end
+
+#@ def dns_name(names):
+spec:
+  #@overlay/replace
+  dnsNames:
+    #@ for n in names:
+    - #@ n
     #@ end
 #@ end
 
@@ -155,7 +169,10 @@ spec:
   #@overlay/replace
   commonName: #@ common_name
   #@overlay/replace
-  dnsNames: #@ dns_names
+  dnsNames:
+  #@ for n in dns_names:
+  - #@ n
+  #@ end
 #@ end
 
 #@ def certificate_issuer(issuer_name):
@@ -175,22 +192,10 @@ spec:
 #@  return overlay.apply(certificate_func(args), metadata(name, namespace), certificate_secret(secret_name), certificate_details(duration, renew_before, common_name, dns_names), certificate_issuer(issuer_name))
 #@ end
 
-#@ def certificate_generate(certificate_func, name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name):
-#@  return overlay.apply(certificate_func(), metadata(name, namespace), certificate_secret(secret_name), certificate_details(duration, renew_before, common_name, dns_names), certificate_issuer(issuer_name))
+#@ def certificate_generate(certificate_func, name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, issuer_name):
+#@  return overlay.apply(certificate_func(), metadata(name, namespace), certificate_secret(secret_name), certificate_details(duration, renew_before, common_name, dns_names), x509_subject(cert_subject), certificate_issuer(issuer_name))
 #@ end
 
-#@ def generate_certificate(name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name):
-#@   return certificate_generate(get_certificate, name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name)
-#@ end
-
-#@ def generate_ca_certificate(name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name):
-#@   return certificate_generate(get_ca_certificate, name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name)
-#@ end
-
-#@ def generate_server_certificate(name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name):
-#@   return certificate_generate(get_server_certificate, name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name)
-#@ end
-
-#@ def generate_client_certificate(name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name):
-#@   return certificate_generate(get_client_certificate, name, namespace, duration, renew_before, secret_name, common_name, dns_names, issuer_name)
+#@ def generate_certificate(name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, issuer_name):
+#@   return certificate_generate(get_certificate, name, namespace, duration, renew_before, secret_name, common_name, dns_names, cert_subject, issuer_name)
 #@ end

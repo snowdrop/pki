@@ -3,30 +3,24 @@
 #@ load("@ytt:data", "data")
 #@ load("/lib/certificates.lib.yml", "generate_dns_names", "generate_self_signed_issuer", "generate_certificate")
 
-#@ endpoint_name = data.values.name
-#@ endpoint_namespace = data.values.namespace
-#@ endpoint_organization = "HTTPS/TLS endpoint"
+#@ name = data.values.name
+#@ namespace = data.values.namespace
+#@ common_name = data.values.certificate.commonName
+#@ dns_names = data.values.certificate.dnsNames
+#@ issuer_name = name
 
-#@ endpoint_self_signed_ca_issuer = endpoint_name + "-selfsigned-ca-issuer"
-
-#@ endpoint_ca = endpoint_name + "-ca"
-#@ endpoint_ca_common_name = "Contour CA"
-#@ endpoint_ca_dns_name = endpoint_name + "ca"
-#@ endpoint_ca_key_pair = endpoint_name + "-ca-key-pair"
-#@ endpoint_ca_issuer = endpoint_name + "-ca-issuer"
-
-#@ endpoint_cert = endpoint_name + "-cert"
-#@ endpoint_cert_duration = data.values.certificate.duration
-#@ endpoint_cert_renew_before = data.values.certificate.renewBefore
-#@ endpoint_secret = endpoint_name + "cert"
-#@ endpoint_cert_common_name = endpoint_name
+#@ cert = name + "-cert"
+#@ cert_subject = data.values.certificate.subject
+#@ cert_secret_name = name + "-tls"
+#@ cert_duration = data.values.certificate.duration
+#@ cert_renew_before = data.values.certificate.renewBefore
+#@ cert_common_name = name
 
 #@ if data.values.certificate.generate:
---- #@ generate_self_signed_issuer(endpoint_self_signed_ca_issuer,endpoint_namespace)
+--- #@ generate_self_signed_issuer(name,namespace)
+--- #@ generate_certificate(name,namespace,cert_duration,cert_renew_before,cert_secret_name,common_name,dns_names,cert_subject,issuer_name)
 
---- #@ generate_certificate(endpoint_ca,endpoint_namespace,endpoint_cert_duration,endpoint_cert_renew_before,endpoint_ca_key_pair,endpoint_ca_common_name,[endpoint_ca_dns_name],endpoint_self_signed_ca_issuer)
-
-#! --- #@ generate_ca_issuer(endpoint_ca_issuer, endpoint_namespace, endpoint_ca_key_pair)
-#! --- #@ generate_server_certificate(endpoint_cert, endpoint_namespace, endpoint_cert_duration, endpoint_cert_renew_before, endpoint_secret, [endpoint_organization], endpoint_cert_common_name, generate_dns_names(endpoint_name, endpoint_namespace), endpoint_ca_issuer)
-#! --- #@ generate_client_certificate(envoy_cert, endpoint_namespace, endpoint_cert_duration, endpoint_cert_renew_before, envoy_secret, [endpoint_organization], envoy_cert_common_name, generate_dns_names(envoy_name, endpoint_namespace), endpoint_ca_issuer)
+#! --- #@ generate_ca_issuer(ca_issuer, namespace, ca_key_pair)
+#! --- #@ generate_server_certificate(cert, namespace, cert_duration, cert_renew_before, secret, [organization], cert_common_name, generate_dns_names(name, namespace), ca_issuer)
+#! --- #@ generate_client_certificate(envoy_cert, namespace, cert_duration, cert_renew_before, envoy_secret, [organization], envoy_cert_common_name, generate_dns_names(envoy_name, namespace), ca_issuer)
 #@ end
