@@ -3,11 +3,11 @@
 ---
 name: spring-boot
 namespace: demo
+commonName: localhost
 
 certificate:
   generate: true
   selfSigned: true
-  commonName: localhost
   dnsNames:
   - localhost
   subject:

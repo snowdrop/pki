@@ -8,6 +8,17 @@ name: ""
 #! The namespace in which to deploy the generated resources such as: Secret, Certificate and Issuer.
 namespace: ""
 
+#! IsCA will mark this Certificate as valid for certificate signing.
+#! This will automatically add the "cert sign" usage to the list of usages.
+isCa: false
+
+#! Application, endpoint, Microservice hostname
+commonName: localhost
+
+#! Name of the secret where the Certifricate Manager will generate the:
+#! ca.crt, tls.crt, tls.key, keystore or trustore files
+secretName:
+
 #! Settings for the TLS certificate for securing the HTTPS/TLS communication.
 #! See: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
 certificate:
@@ -19,18 +30,11 @@ certificate:
   #!  selfSigned: {}
   selfSigned: true
 
-  #! IsCA will mark this Certificate as valid for certificate signing.
-  #! This will automatically add the "cert sign" usage to the list of usages.
-  isCa: false
-
   #! How long the certificate should be valid for.
   duration: 8760h
 
   #! How long before expiration the certificates should be renewed.
   renewBefore: 360h
-
-  #! Application, endpoint, Microservice hostname
-  commonName: localhost
 
   #! Valid usage contexts for keys. See: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.KeyUsage
   usages: []

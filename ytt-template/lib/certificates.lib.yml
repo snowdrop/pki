@@ -17,34 +17,13 @@ spec:
   selfSigned: {}
 #@ end
 
-#@ def ca_issuer():
-spec:
-  #@overlay/match missing_ok=True
-  ca:
-    secretName: "ca-key-pair"
-#@ end
-
-#@ def ca_secret(secret_name):
-spec:
-  ca:
-    secretName: #@ secret_name
-#@ end
-
 #! Generate a Selfsigned Issuer - see: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.Issuer
 #@ def get_self_signed_issuer():
 #@   return overlay.apply(get_issuer(), self_signed_issuer())
 #@ end
 
-#@ def get_ca_issuer():
-#@   return overlay.apply(get_issuer(), ca_issuer())
-#@ end
-
 #@ def generate_self_signed_issuer(name, namespace):
 #@   return overlay.apply(get_self_signed_issuer(), metadata(name, namespace))
-#@ end
-
-#@ def generate_ca_issuer(name, namespace, secret_name):
-#@   return overlay.apply(get_ca_issuer(), metadata(name, namespace), ca_secret(secret_name))
 #@ end
 
 #@ def get_certificate():
