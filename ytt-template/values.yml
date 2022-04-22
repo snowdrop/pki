@@ -1,13 +1,15 @@
 #! Doc: https://carvel.dev/ytt/docs/v0.40.0/how-to-use-data-values/
 #@data/values
+#@overlay/match-child-defaults missing_ok=True
 ---
 #! Name of the HTTPS/TLS application, microservice, endpoint.
-endpoint: ""
+name: ""
 
 #! The namespace in which to deploy the generated resources such as: Secret, Certificate and Issuer.
 namespace: demo
 
 #! Settings for the TLS certificate for securing the HTTPS/TLS communication.
+#! See: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
 certificate:
   #! If true, generate the Certificate, Issuer CRDs processed by the Certificate Manager on k8s (if installed)
   generate: true
@@ -17,14 +19,42 @@ certificate:
   #!  selfSigned: {}
   selfSigned: true
 
+  #! IsCA will mark this Certificate as valid for certificate signing.
+  #! This will automatically add the "cert sign" usage to the list of usages.
+  isCa: false
+
   #! How long the certificate should be valid for.
   duration: 8760h
 
   #! How long before expiration the certificates should be renewed.
   renewBefore: 360h
 
-  #! Endpoint hostname
+  #! Application, endpoint, Microservice hostname
   commonName: localhost
+
+  #! Valid usage contexts for keys. See: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.KeyUsage
+  usages: []
+
+  #! Information about the algorithm, key, size to be used
+  #! See: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificatePrivateKey
+  privateKey:
+    #! RotationPolicy
+    #! https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.PrivateKeyRotationPolicy
+    rotationPolicy:
+    #! RSA,Ed25519 or ECDSA
+    algorithm: RSA
+    #! PKCS1 and PKCS8. Default: PKCS1
+    encoding: PKCS8
+    size:
+
+  #! https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.PKCS12Keystore
+  keystores:
+    type: pkcs12
+    create: true
+    #! https://cert-manager.io/docs/reference/api-docs/#meta.cert-manager.io/v1.SecretKeySelector
+    passwordSecretRef:
+      name: pkcs12-pass
+      key: password
 
   #! X.509 Subject
   subject:
