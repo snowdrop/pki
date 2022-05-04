@@ -30,7 +30,7 @@ To generate locally the certificate and key, the following tools are needed:
 - openssl
 - keytool
 
-To generate on kubernetes the certificate and keys, install the certificat manager project
+To generate on kubernetes the certificate and keys, install the [certificate manager](https://cert-manager.io/docs/) project
 
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
@@ -38,7 +38,7 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
 ## Create a pkcs12 using cert manager
 
-The scenario to follow to populate the needed files (ca.crt, tls.crt, tls.key and keystore.p12) using the Certificate Manager is quite simple and will need to create a:
+The scenario to follow to populate the needed files (ca.crt, tls.crt, tls.key and [keystore.p12](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateKeystores)) using the Certificate Manager and selfsigned certificate is quite simple and will need to create a:
 - Keystore secret
 - Certificate CR containing the information about the hostname, machine to secure using HTTPS/TLS
 - Self signed Issuer CR 
