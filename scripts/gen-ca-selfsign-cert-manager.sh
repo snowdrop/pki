@@ -47,7 +47,7 @@ spec:
     organizations:
     - "Red Hat"
     localities:
-    - Florennes
+    - Silenrieux
     provinces:
     - Namur
     countries:
