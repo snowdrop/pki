@@ -32,7 +32,6 @@ metadata:
   name: selfsigned-issuer
 spec:
   selfSigned: {}
-and Certificate:
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
