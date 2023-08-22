@@ -34,6 +34,15 @@ To generate on kubernetes the certificate and keys, install the [certificate man
 
 ```bash
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+
+or 
+
+helm repo add jetstack https://charts.jetstack.io
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --set installCRDs=true
 ```
 
 ## Create a pkcs12 using cert manager
